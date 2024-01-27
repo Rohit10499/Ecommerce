@@ -14,11 +14,11 @@ const UpadateProduct = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState({});
     const [quantity, setQuantity] = useState("");
     const [photo, setPhoto] = useState("");
     const [shipping, setShipping] = useState("");
-    const [id, setId] = useState();
+    const [id, setId] = useState("");
 
     //get single Product
 
@@ -27,23 +27,25 @@ const UpadateProduct = () => {
             const { data } = await axios.get(
                 `/api/v1/product/get-product/${params.slug}`
             );
-            // console.log("get singlr product",data)
+            // console.log("get single product",data)
             setName(data.product.name);
             setId(data.product._id);
             setDescription(data.product.description);
             setPrice(data.product.price);
             setQuantity(data.product.quantity);
             setShipping(data.product.shipping);
-            setCategory(data.product.category);
+            setCategory(data.product.category._id);
         } catch (error) {
             console.log(error);
-            toast.error("Error While Geatting  Single Product ");
+            // toast.error("Error While Geatting  Single Product ");
         }
     };
     useEffect(() => {
         getSingleProduct();
         //eslint-disable-next-line
     }, []);
+
+    //  console.log("Product", id)
 
     // get All category
     const getAllCategory = async () => {
@@ -57,6 +59,13 @@ const UpadateProduct = () => {
             toast.error("Something wents wrong in getting Category");
         }
     };
+
+
+    useEffect(() => {
+        getAllCategory();
+    }, []);
+
+
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
@@ -66,16 +75,17 @@ const UpadateProduct = () => {
             productData.append("price", price);
             productData.append("quantity", quantity);
             photo && productData.append("photo", photo);
-            productData.append("category", category);
+            productData.append("category", category._id);
             const { data } = await axios.put(
                 `/api/v1/product/update-product/${id}`,
                 productData
             );
             if (data?.success) {
-                // navigate("/dashboard/admin/products");
-                toast.success("Product is Updated Successfully");
+                toast.success(data?.message);
+                navigate("/dashboard/admin/products");
+                
             } else {
-                toast.error("error in creation in products");
+                toast.error(data?.message);
             }
         } catch (error) {
             console.log(error);
@@ -83,9 +93,22 @@ const UpadateProduct = () => {
         }
     };
 
-    useEffect(() => {
-        getAllCategory();
-    }, []);
+const handleDelete=async()=>{
+     try {
+        let ansewer=window.prompt("Are you Sure want to delete this product ?")
+        if(!ansewer) return;
+        const {data}=await axios.delete(`/api/v1/product/delete-product/${id}`);
+        toast.success(data.message);
+        console.log("toast message  for delete",data)
+        navigate("/dashboard/admin/products")
+        
+     } catch (error) {
+        console.log(error)
+        toast.error("Something went wrong");
+        
+     }
+}
+   
     return (
         <Layout>
             <div className="pagePadding container-fluid ">
@@ -108,9 +131,9 @@ const UpadateProduct = () => {
                                 onChange={(value) => {
                                     setCategory(value);
                                 }}
-                                value={category.name}
+                                value={category}
                             >
-                                {categories?.map((c) => (
+                                { categories?.map((c) => (
                                     <Option key={c._id} value={c._id}>
                                         {c.name}
                                     </Option>
@@ -143,8 +166,9 @@ const UpadateProduct = () => {
                                     </div>
                                 ) : (
                                     <div className="text-center">
+                                       
                                         <img
-                                            src={`/api/v1/product/product-photo/${id}`}
+                                            src={ id ? `/api/v1/product/product-photo/${id}`:""}
                                             alt="product_photo"
                                             height={"200px"}
                                             className="img img-responsive"
@@ -212,12 +236,21 @@ const UpadateProduct = () => {
                         </div>
                         <div className="my-3 text-end">
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-warning m-1"
                                 onClick={handleUpdate}
                             >
-                                UPDATE PRODUCT
+                                Update
                             </button>
+                            <button
+                                className="btn btn-danger m-1"
+                                onClick={handleDelete}
+                            >
+                                Delete
+                            </button>
+
+                            
                         </div>
+                   
                     </div>
                 </div>
             </div>

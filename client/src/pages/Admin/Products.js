@@ -39,9 +39,9 @@ const Products = () => {
                             style={{ maxHeight: "60vh", overflowY: "scroll" }}
                         >
                             {products?.map((p) => (
-                                <div className="col-3 mb-3">
+                                <div className="col-3 mb-3"   key={p._id}>
                                     <Link
-                                        key={p._id}
+                                      
                                         to={`/dashboard/admin/product/${p.slug}`}
                                         className="product-link"
                                     >

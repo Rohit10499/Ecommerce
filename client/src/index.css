@@ -58,6 +58,12 @@
 }
 
 /* ============== page not found css====================== */
+
+.home{
+    margin-top: 4.5rem;
+    min-height: 28.6rem;
+}
+
 .pnf {
     display: flex;
     min-height: 32.6rem;
