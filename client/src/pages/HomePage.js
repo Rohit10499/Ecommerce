@@ -1,36 +1,138 @@
-import React, { useState } from 'react'
-import Layout from "./../components/Layout/Layout"
-import { useAuth } from '../context/auth'
-function HomePage() {
-  const [auth,setAuth]=useAuth();
-  const [products,setProducts]=useState([]);
-  const [categories,setCategories]=useState([]);
-  return (
+import React, { useState, useEffect } from "react";
+import Layout from "./../components/Layout/Layout";
 
-    <Layout >
- 
-    <div className='row' style={{minHeight:"31.5rem",paddingTop:"4rem"}}>
-      <div className='col-3'>
-        <h6 className='text-center'>Filter By Category</h6>
-      </div>
-      <div className='col-9 '  >
-        <h1 className='text-center'> All Products</h1>
-        <div className='d-flex flex-wrap' >
-          <h1 >Products</h1>
-        </div> 
-      
-    </div>
-  
-   
-   
-    </div>
-  
+import axios from "axios";
+import { Checkbox, Radio } from "antd";
+import { Prices } from "../components/Price";
+function HomePage() {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [checked, setChecked] = useState([]);
+  const [radio, setRadio] = useState([]);
+
+  //filter by cat
+  const handleFilter = (value, id) => {
+    let all = [...checked];
+    if (value) {
+      all.push(id);
+    } else {
+      all = all.filter((c) => c !== id);
+    }
+    setChecked(all);
+  };
+
+  // get All category
+  const getAllCategory = async () => {
+    try {
+      const { data } = await axios.get("/api/v1/category/get-category");
+      if (data?.success) {
+        setCategories(data?.category);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllCategory();
+  }, []);
+
+  //get All products
+
+  const getAllProducts = async () => {
+    try {
+      const { data } = await axios.get("/api/v1/product/get-product");
+      setProducts(data.products);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if(!checked.length || !radio.length)
+    getAllProducts();
+  }, [checked.length,radio.length]);
+
+  useEffect(()=>{
+    if(checked.length || radio.length) filterProduct();
+
+  },[checked,radio])
+
+//get filterd product
+
+const filterProduct =async()=>{
+  try {
+    const {data}=await axios.post(`/api/v1/product/product-filters`,{checked,radio})
+    setProducts(data?.products)
     
+  } catch (error) {
+    console.log(error);
     
-    
-    
-    </Layout>
-  )
+  }
 }
 
-export default HomePage
+  return (
+    <Layout>
+      <div className="row" style={{ minHeight: "31.5rem", paddingTop: "4rem" }}>
+        <div className="col-3">
+          <h6 className="text-center">Filter By Category</h6>
+          <div className="d-flex flex-column">
+            {categories?.map((c) => (
+              <Checkbox
+                key={c._id}
+                onChange={(e) => handleFilter(e.target.checked, c._id)}
+              >
+                {c.name}
+              </Checkbox>
+            ))}
+          </div>
+      
+        {/* filter Price */}
+        <h6 className="text-center">Filter By Price</h6>
+        <div className="d-flex flex-column">
+            
+           <button className="btb btn-danger" onClick={()=>window.location.reload()} >Reset Filter</button>
+        </div>
+        </div>
+
+        <div className="col-9 ">
+      
+          <h1 className="text-center "> All Products</h1>
+          <div className="d-flex flex-wrap">
+            {/* <h1 >Products</h1> */}     
+            {products?.map((p) => (
+              <div className="col-3 mb-3" key={p._id}>
+                {/* <Link
+                                      
+                                        to={`/dashboard/admin/product/${p.slug}`}
+                                        className="product-link"
+                                    > */}
+                <div className="card">
+                  <img
+                  style={{height:"116px"}}
+                    src={`/api/v1/product/product-photo/${p._id}`}
+                    className="card-img-top"
+                    alt={p.name}
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{p.name}</h5>
+                    <p className="card-text">{p.description.substring(0,30)}...</p>
+                    <p className="card-text"> $ {p.price}</p>
+                    <button className="btn btn-primary m-1">
+                      More deteils
+                    </button>
+                    <button className="btn btn-secondary m-1">
+                      Add to cart
+                    </button>
+                  </div>
+                </div>
+                {/* </Link> */}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+export default HomePage;
