@@ -9,6 +9,20 @@ function HomePage() {
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const [radio, setRadio] = useState([]);
+  const [total,setTotal]=useState(0)
+  const [page,setPage]=useState(1)
+  const [loading, setLoading] = useState(false);
+
+  //get Total Count 
+  const getTotal=async()=>{
+    try {
+      const {data}=await axios.get(`/api/v1/product/product-count`)
+      setTotal(data?.total)
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
 
   //filter by cat
   const handleFilter = (value, id) => {
@@ -35,15 +49,39 @@ function HomePage() {
 
   useEffect(() => {
     getAllCategory();
+    getTotal();
   }, []);
 
+
+
+  useEffect(() => {
+    if (page === 1) return;
+    loadMore();
+  }, [page]);
+  //load more
+  const loadMore = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      setLoading(false);
+      setProducts([...products, ...data?.products]);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
   //get All products
 
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get("/api/v1/product/get-product");
+      setLoading(true)
+      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      setLoading(false)
+
       setProducts(data.products);
     } catch (error) {
+      setLoading(false)
+
       console.log(error);
     }
   };
@@ -89,9 +127,23 @@ const filterProduct =async()=>{
         {/* filter Price */}
         <h6 className="text-center">Filter By Price</h6>
         <div className="d-flex flex-column">
+        <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+              {Prices?.map((p) => (
+                <div key={p._id}>
+                  <Radio value={p.array}>{p.name}</Radio>
+                </div>
+              ))}
+            </Radio.Group>
+            </div>
             
-           <button className="btb btn-danger" onClick={()=>window.location.reload()} >Reset Filter</button>
-        </div>
+            <div className="d-flex  mt-2 ">
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => window.location.reload()}
+            >
+              RESET FILTERS
+            </button>
+          </div>
         </div>
 
         <div className="col-9 ">
@@ -128,6 +180,18 @@ const filterProduct =async()=>{
                 {/* </Link> */}
               </div>
             ))}
+          </div>
+          <div className="m-2 p-3">
+          {
+                products && products.length<total &&(
+                  <button className="btn btn-warning" onClick={(e)=>{e.preventDefault();
+                  setPage(page+1)
+                  }}
+                  >
+                  {loading ? "Loading..." :"Loadmore"}
+                   </button>
+                )
+          }
           </div>
         </div>
       </div>
