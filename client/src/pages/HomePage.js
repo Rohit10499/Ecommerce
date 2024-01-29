@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./../components/Layout/Layout";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Price";
 function HomePage() {
+  const navigate=useNavigate()
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -153,11 +155,7 @@ const filterProduct =async()=>{
             {/* <h1 >Products</h1> */}     
             {products?.map((p) => (
               <div className="col-3 mb-3" key={p._id}>
-                {/* <Link
-                                      
-                                        to={`/dashboard/admin/product/${p.slug}`}
-                                        className="product-link"
-                                    > */}
+            
                 <div className="card">
                   <img
                   style={{height:"116px"}}
@@ -169,7 +167,7 @@ const filterProduct =async()=>{
                     <h5 className="card-title">{p.name}</h5>
                     <p className="card-text">{p.description.substring(0,30)}...</p>
                     <p className="card-text"> $ {p.price}</p>
-                    <button className="btn btn-primary m-1">
+                    <button className="btn btn-primary m-1" onClick={()=>navigate(`product/${p.slug}`)}>
                       More deteils
                     </button>
                     <button className="btn btn-secondary m-1">
@@ -177,7 +175,7 @@ const filterProduct =async()=>{
                     </button>
                   </div>
                 </div>
-                {/* </Link> */}
+          
               </div>
             ))}
           </div>

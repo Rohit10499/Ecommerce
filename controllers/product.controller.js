@@ -251,6 +251,51 @@ try {
   
 }
 }
+
+const searchProductController=async(req,res)=>{
+  try {
+    const {keyword}=req.params
+    const results=await Product.find({
+      $or:[
+       { name:{$regex :keyword, $options:'i'}},
+       {description:{$regex:keyword,$options:"i"}}
+      ]
+    }).select("-photo")
+    res.json(results)
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success:false,
+      message:"Error in search API ",
+      error
+    })
+    
+  }
+}
+
+//similar product
+const relatedProductController=async(req,res)=>{
+  try {
+    const {pid,cid}=req.params;
+    const products=await Product.find({
+      category:cid,
+      _id:{$ne:pid},
+    }).select("-photo").limit(3).populate("category");
+    res.status(200).send({
+      success:true,
+      products,
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({
+      success:false,
+      message:"Error while getting related product ",
+      error
+    })
+    
+  }
+}
 export {
   createProductController,
   getProductController,
@@ -261,4 +306,6 @@ export {
   productFiltersController,
   productCountCotroller,
   productListController,
+  searchProductController,
+  relatedProductController,
 };

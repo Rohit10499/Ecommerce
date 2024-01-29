@@ -19,4 +19,4 @@ const CategoryFrom = ({handleSubmit,value,setValue}) => {
   )
 }
 
-export default CategoryFrom
+export default CategoryFrom 
