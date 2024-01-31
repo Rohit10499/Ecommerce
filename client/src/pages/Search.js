@@ -15,7 +15,7 @@ const Search = () => {
        <h6>{values?.results.length < 1 ?"No Products Found" :`Found ${values?.results.length}`}</h6>
 
 
-       <div className="d-flex flex-wrap mt-4">
+       <div className="row g-4">
             {/* <h1 >Products</h1> */}     
             {values?.results?.map((p) => (
               <div className="col-3 mb-3" key={p._id}>
@@ -27,15 +27,21 @@ const Search = () => {
                     alt={p.name}
                   />
                   <div className="card-body">
-                    <h5 className="card-title">{p.name}</h5>
-                    <p className="card-text">{p.description.substring(0,30)}...</p>
+                    <h6 className="card-title">{p.name.substring(0,50)}</h6>
+                    <p className="card-text">{p.description.substring(0,55)}...</p>
                     <p className="card-text"> $ {p.price}</p>
-                    <button className="btn btn-primary m-1">
-                      More deteils
+                    <div className='row'>
+                    <div className='col-6'>
+                    <button className="btn btn-primary btn-sm ">
+                      More Details
                     </button>
-                    <button className="btn btn-secondary m-1">
+                    </div>
+                    <div className='col-6'>
+                    <button className="btn btn-secondary btn-sm">
                       Add to cart
                     </button>
+                    </div>
+                    </div>
                   </div>
                 </div>
                 {/* </Link> */}

@@ -9,10 +9,10 @@ const Layout = ({ children }) => {
     return (
         <div>
             <Header />
-            <main>
+          
                 <ToastContainer />
                 {children}
-            </main>
+            
             <Footer />
         </div>
     );

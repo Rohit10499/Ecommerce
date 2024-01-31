@@ -23,9 +23,11 @@ import ProductsDetails from "./pages/ProductsDetails";
 import Categories from "./pages/Categories";
 import CategoryProduct from "./pages/CategoryProduct";
 import CartPage from "./pages/CartPage";
+import Header from "./components/Layout/Header";
 function App() {
   return (
     <>
+    {/* <Header/> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:slug" element={<ProductsDetails />} />

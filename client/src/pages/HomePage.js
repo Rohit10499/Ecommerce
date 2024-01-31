@@ -17,7 +17,7 @@ function HomePage() {
   const [total,setTotal]=useState(0)
   const [page,setPage]=useState(1)
   const [loading, setLoading] = useState(false);
-
+ 
   //get Total Count 
   const getTotal=async()=>{
     try {
@@ -115,7 +115,8 @@ const filterProduct =async()=>{
 
   return (
     <Layout>
-      <div className="row" style={{ minHeight: "31.5rem", paddingTop: "4rem" }}>
+    <div className="container">
+      <div className="row " style={{ minHeight: "31.5rem", paddingTop: "4rem" }}>
         <div className="col-3">
           <h6 className="text-center">Filter By Category</h6>
           <div className="d-flex flex-column">
@@ -154,12 +155,12 @@ const filterProduct =async()=>{
         <div className="col-9 ">
       
           <h1 className="text-center "> All Products</h1>
-          <div className="d-flex flex-wrap">
+          <div class="row  g-4">
             {/* <h1 >Products</h1> */}     
             {products?.map((p) => (
               <div className="col-3 mb-3" key={p._id}>
             
-                <div className="card">
+                <div className="card ">
                   <img
                   style={{height:"116px"}}
                     src={`/api/v1/product/product-photo/${p._id}`}
@@ -167,18 +168,26 @@ const filterProduct =async()=>{
                     alt={p.name}
                   />
                   <div className="card-body">
-                    <h5 className="card-title">{p.name.substring(0,60)}...</h5>
-                    <p className="card-text">{p.description.substring(0,50)}...</p>
+                    <h6 className="card-title">{p.name.substring(0,35)}...</h6>
+                    <p className="card-text">{p.description.substring(0,40)}...</p>
                     <p className="card-text"> $ {p.price}</p>
-                    <button className="btn btn-primary m-1" onClick={()=>navigate(`product/${p.slug}`)}>
-                      More deteils
+                    <div  className="row">
+                    <div className="col-4">
+                    <button className="btn btn-primary btn-sm " onClick={()=>navigate(`product/${p.slug}`)}>
+                      More
                     </button>
-                    <button className="btn btn-secondary m-1" onClick={()=>{setCart([...cart,p]);
+                    </div>
+                    <div className="col-8">
+                    <button className="btn btn-secondary  btn-sm" onClick={()=>{setCart([...cart,p]);
                     localStorage.setItem("cart",JSON.stringify([...cart,p]))
                     toast.success("Item added to cart")
                     }}>
                       Add to cart
                     </button>
+                    </div>
+                   
+                  
+                    </div>
                   </div>
                 </div>
           
@@ -198,6 +207,7 @@ const filterProduct =async()=>{
           }
           </div>
         </div>
+      </div>
       </div>
     </Layout>
   );

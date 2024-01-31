@@ -35,7 +35,7 @@ const Products = () => {
                     <div className="col-md-9 ">
                         <h1 className="text-center">All Products List</h1>
                         <div
-                            className="row"
+                            className="row g-4"
                             style={{ maxHeight: "60vh", overflowY: "scroll" }}
                         >
                             {products?.map((p) => (
@@ -47,17 +47,17 @@ const Products = () => {
                                     >
                                         <div className="card">
                                             <img
-                                          
+                                                  style={{height:"116px"}}
                                                 src={`/api/v1/product/product-photo/${p._id}`}
                                                 className="card-img-top"
                                                 alt={p.name} 
                                             />
                                             <div className="card-body">
                                                 <h5 className="card-title">
-                                                    {p.name}
+                                                    {p.name.substring(0,35)}...
                                                 </h5>
                                                 <p className="card-text">
-                                                    {p.description}
+                                                    {p.description.substring(0,40)}...
                                                 </p>
                                             </div>
                                         </div>
