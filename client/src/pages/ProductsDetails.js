@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout/Layout";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useCart } from "../context/cart";
+import { toast } from "react-toastify";
+
 
 const ProductsDetails = () => {
   const params = useParams();
   const [product, setProduct] = useState({});
+  const [cart,setCart]=useCart();
+
   const [relatedProducts,setRelatedProducts]=useState([])
   useEffect(() => {
     if (params?.slug) getProduct();
@@ -53,8 +58,10 @@ const getSimilarProduct=async(pid,cid)=>{
             <h6> Name : {product.name}</h6>
             <h6>Description: {product.description}</h6>
             <h6>Price : {product.price}</h6>
-            {/* <h6>Category : {product.category.name}</h6> */}
-            <button className="btn btn-secondary m-1">Add to cart</button>
+            <h6>Category : {product?.category?.name}</h6>
+            <button className="btn btn-secondary m-1"  onClick={()=>{setCart([...cart,product])
+                    toast.success("Item added to cart")
+                    }}>Add to cart</button>
           </div>
           <hr/>
           <div className="row container">
@@ -76,7 +83,9 @@ const getSimilarProduct=async(pid,cid)=>{
                     <p className="card-text">{p.description.substring(0,30)}...</p>
                     <p className="card-text"> $ {p.price}</p>
                   
-                    <button className="btn btn-secondary m-1">
+                    <button className="btn btn-secondary m-1" onClick={()=>{setCart([...cart,p])
+                    toast.success("Item added to cart")
+                    }}>
                       Add to cart
                     </button>
                   </div>
